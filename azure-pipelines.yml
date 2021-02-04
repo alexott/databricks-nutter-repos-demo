@@ -1,3 +1,4 @@
+# Grab variables from the specific variable group
 variables:
 - group: 'Nutter Testing'
 
