@@ -41,8 +41,8 @@ stages:
 
     - script: |
         curl -n -X POST "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
-      -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-      -d "{\"path\": \"/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}"
+          -H "Authorization: Bearer $DATABRICKS_TOKEN" \
+          -d "{\"path\": \"/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}"
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
