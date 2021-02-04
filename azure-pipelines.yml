@@ -56,11 +56,17 @@ stages:
       displayName: 'Update Staging project'
 
     - script: |
-        nutter run '/Projects/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive
+        nutter run '/Projects/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
       displayName: 'Execute Nutter tests'
+
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/test-*.xml' 
+        failTaskOnFailedTests: true
 
 - stage: onRelease
   condition: |
@@ -105,9 +111,15 @@ stages:
 
 # We can do a separate set of the tests for release branches
       - script: |
-          nutter run '/Projects/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive
+          nutter run '/Projects/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report
         env:
           DATABRICKS_HOST: $(DATABRICKS_HOST)
           DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
         displayName: 'Execute Nutter tests on release'
+
+      - task: PublishTestResults@2
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '**/test-*.xml' 
+          failTaskOnFailedTests: true
 
