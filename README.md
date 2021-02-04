@@ -73,7 +73,7 @@ Azure DevOps can work with GitHub repositories as well - see [documentation](htt
 * Configure job & task:
   * Configure agent - in the "Agent Specification" select "ubuntu-18.04"
   * Click on "+" and find the "Command line" task
-  * Enter following code that will connect to the production environment & update the checkout of the project:
+  * Enter following code that will connect to the production environment & update the checkout of the project (via [Projects REST API](https://docs.databricks.com/projects.html#projects-api-experimental)):
 
 ```sh
 curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
