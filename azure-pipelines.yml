@@ -1,3 +1,6 @@
+variables:
+- group: 'Nutter Testing'
+
 trigger:
   batch: true
   branches:
