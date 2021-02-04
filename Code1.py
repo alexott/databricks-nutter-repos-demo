@@ -9,3 +9,7 @@ else:
   greeting = f"Hello {user_name}"
   
 dbutils.notebook.exit(greeting)
+
+# COMMAND ----------
+
+# just change
