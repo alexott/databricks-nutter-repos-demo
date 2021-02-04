@@ -44,6 +44,7 @@ stages:
 
 # https://docs.databricks.com/projects.html#projects-api-experimental
     - script: |
+        echo "Checking out the $(Build.SourceBranchName) branch"
         curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
           -H "Authorization: Bearer $DATABRICKS_TOKEN" \
           -d "{\"path\": \"/Projects/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}"
@@ -87,6 +88,11 @@ stages:
         displayName: 'Checkout & Build.Reason: $(Build.Reason) & Build.SourceBranchName: $(Build.SourceBranchName)'
 
       - script: |
+          python -m pip install --upgrade pip nutter
+        displayName: 'Install dependencies'
+
+      - script: |
+          echo "Checking out the $(Build.SourceBranchName) branch"
           curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
             -H "Authorization: Bearer $DATABRICKS_TOKEN" \
             -d "{\"path\": \"/Projects/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}"
