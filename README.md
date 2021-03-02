@@ -70,6 +70,7 @@ Azure DevOps can work with GitHub repositories as well - see [documentation](htt
 * In the Azure DevOps, in the Pipelines section, select Releases, and click "New release pipeline"
 * Select "Empty Job" in the dialog
 * In the Stage dialog enter some meaningful name for it
+* In the "Variables" tab, link the variable group that was created previously
 * Configure job & task:
   * Configure agent - in the "Agent Specification" select "ubuntu-18.04"
   * Click on "+" and find the "Command line" task
@@ -78,8 +79,8 @@ Azure DevOps can work with GitHub repositories as well - see [documentation](htt
 ```sh
 curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
      -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-     -d "{\"path\": \"/Projects/Production/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" && \
-cat "/tmp/$(Build.SourceBranchName)-out.json" && \
+     -d "{\"path\": \"/Projects/Production/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" ; \
+cat "/tmp/$(Build.SourceBranchName)-out.json" ; \
 grep -v error_code "/tmp/$(Build.SourceBranchName)-out.json"
 ```
 

@@ -48,8 +48,8 @@ stages:
         echo "Checking out the $(Build.SourceBranchName) branch"
         curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
           -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-          -d "{\"path\": \"/Projects/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" && \
-          cat "/tmp/$(Build.SourceBranchName)-out.json" && \
+          -d "{\"path\": \"/Projects/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" ; \
+          cat "/tmp/$(Build.SourceBranchName)-out.json" ; \
           grep -v error_code "/tmp/$(Build.SourceBranchName)-out.json"
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
@@ -102,8 +102,8 @@ stages:
           echo "Checking out the $(Build.SourceBranchName) branch"
           curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
             -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-            -d "{\"path\": \"/Projects/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" && \
-            cat "/tmp/$(Build.SourceBranchName)-out.json" && \
+            -d "{\"path\": \"/Projects/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" ; \
+            cat "/tmp/$(Build.SourceBranchName)-out.json" ; \
             grep -v error_code "/tmp/$(Build.SourceBranchName)-out.json"
         env:
           DATABRICKS_HOST: $(DATABRICKS_HOST)
