@@ -49,7 +49,7 @@ The Azure DevOps setup consists of the several steps, described in the next sect
 
 Because we have several pipelines, the it's makes sense to define [variable group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups) to store the data that are necessary for execution of tests & deployment of the code.  We need following configuration properties for execution of our pipelines:
 
-* `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (without `?o=`).
+* `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (host name with `https://`, without `?o=`).
 * `databricks_token` - personal access token for executing commands against the workspace.  Mark this variable as private!
 * `cluster_id` - the ID of the cluster where tests will be executed.
 
