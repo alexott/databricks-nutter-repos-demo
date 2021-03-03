@@ -1,6 +1,6 @@
-This repository contains notebooks & instructions for setting up the demo of development workflow & CI/CD (on Azure DevOps) using the Databricks notebooks and [Projects feature](https://docs.databricks.com/projects.html).  Testing of notebooks is done using the [Nutter library](https://github.com/microsoft/nutter) developed by Microsoft.  The "main" code is in the notebooks `Code1.py` and `Code2.py`, and the testing code is in the `test_code1_code2.py`.
+This repository contains notebooks & instructions for setting up the demo of development workflow & CI/CD (on Azure DevOps) using the Databricks notebooks and [Repos feature](https://docs.databricks.com/repos.html).  Testing of notebooks is done using the [Nutter library](https://github.com/microsoft/nutter) developed by Microsoft.  The "main" code is in the notebooks `Code1.py` and `Code2.py`, and the testing code is in the `test_code1_code2.py`.
 
-This demo shows how you can use Projects to work on your own copy of notebooks, test them after commit in the "staging" environment, and promote to "production" on successful testing of `releases` branch.
+This demo shows how you can use Repos to work on your own copy of notebooks, test them after commit in the "staging" environment, and promote to "production" on successful testing of `releases` branch.
 
 # The workflow
 
@@ -10,35 +10,35 @@ The development workflow is organized as on following image:
 
 1. Developer works on the code in the separate environment (personal space on Databricks, etc.).  When code changes are done, they are committed into some branch
 1. CI/CD implementation (Azure DevOps here) picks up the changes, and tests them in a staging environment (executes the "build pipeline").  This consists of several steps (see [azure-pipelines.yml](azure-pipelines.yml) for technical details):
-   * Update project checkout in the "Staging" folder
+   * Update repository checkout in the "Staging" folder
    * Execute tests with updated code
    * Publish tests results
 1. In current setup, there are different jobs for the "normal" branches, and for "release" branch (`releases` in this setup), this would allow to run different sets of tests when we're preparing the release
-1. If commit is done to the "release branch, and there are no test failures, then the "release pipeline" is triggered, and it updates the production environment by updating the project checkout in the "Production" folder.
+1. If commit is done to the "release branch, and there are no test failures, then the "release pipeline" is triggered, and it updates the production environment by updating the repository checkout in the "Production" folder.
 
 
 # Setup on Databricks side
 
-Your Databricks workspace needs to have Project functionality enabled.  If it's enabled
+Your Databricks workspace needs to have Repos functionality enabled.  If it's enabled, you should see the "Repos" icon in the navigation panel:
 
 * Fork repository into your environment - Github, or Azure DevOps (follow Databricks documentation on setting
-* In the Projects, click "Create Project" and link it to the Git repository that you've forked - this will be your personal copy of the code that will be used for work:
+* In the Repos, click "Create Repo" and link it to the Git repository that you've forked - this will be your personal copy of the code that will be used for work:
 
-![Create a personal project](images/create-personal-project.png)
+![Create a personal repo](images/create-personal-project.png)
 
 * Create the staging & production checkouts
-  * In the Projects, in the top-level part, click on the "ᐯ" near the "Projects" header, select "Create" and select "Folder" (see image).  Give it the name "Staging":
+  * In the Repos, in the top-level part, click on the "ᐯ" near the "Repos" header, select "Create" and select "Folder" (see image).  Give it the name "Staging":
 
-![Create a personal project](images/create-staging-folder.png)
+![Create a staging folder](images/create-staging-folder.png)
 
-  * Click on the  "ᐯ" near the "Staging" folder, and click "Create" and select "Project":
+  * Click on the  "ᐯ" near the "Staging" folder, and click "Create" and select "Repo":
 
-![Create a personal project](images/create-project-in-staging.png)
+![Create a staging repository](images/create-project-in-staging.png)
 
   * Link it to the Git repository, similarly how you did it for your personal checkout 
-  * Create the "Production" folder with project inside, repeating two previous steps
+  * Create the "Production" folder with repository inside, repeating two previous steps
 * Create a new cluster that will be used for execution of the tests, you will need to pass the [cluster ID](https://docs.databricks.com/workspace/workspace-details.html#cluster-url-and-id) to the Nutter to execute the tests
-* Create a [personal access token (PAT)](https://docs.databricks.com/administration-guide/access-control/tokens.html) that will be used for execution of the tests & updating the projects
+* Create a [personal access token (PAT)](https://docs.databricks.com/administration-guide/access-control/tokens.html) that will be used for execution of the tests & updating the repository
 
 
 # Setup Azure DevOps
@@ -74,14 +74,14 @@ Azure DevOps can work with GitHub repositories as well - see [documentation](htt
 * Configure job & task:
   * Configure agent - in the "Agent Specification" select "ubuntu-18.04"
   * Click on "+" and find the "Command line" task
-  * Enter following code that will connect to the production environment & update the checkout of the project (via [Projects REST API](https://docs.databricks.com/projects.html#projects-api-experimental)):
+  * Enter following code that will connect to the production environment & update the checkout of the repository (via [Repos REST API](https://docs.databricks.com/repos.html#projects-api-experimental)):
 
 ```sh
-curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
+curl -s -n -X POST -o "/tmp/releases-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
      -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-     -d "{\"path\": \"/Projects/Production/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" ; \
-cat "/tmp/$(Build.SourceBranchName)-out.json" ; \
-grep -v error_code "/tmp/$(Build.SourceBranchName)-out.json"
+     -d "{\"path\": \"/Repos/Production/databricks-nutter-projects-demo\", \"branch\": \"releases\"}" ; \
+cat "/tmp/releases-out.json" ; \
+grep -v error_code "/tmp/releases-out.json"
 ```
 
   * Below the code, add environment variable `DATABRICKS_TOKEN` with value `$(DATABRICKS_TOKEN)` - this will pull it from the variable group into the script's execution context

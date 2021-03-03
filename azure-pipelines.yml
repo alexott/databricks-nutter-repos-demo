@@ -43,12 +43,12 @@ stages:
         python -m pip install --upgrade pip nutter
       displayName: 'Install dependencies'
 
-# https://docs.databricks.com/projects.html#projects-api-experimental
+# https://docs.databricks.com/repos.html#projects-api-experimental
     - script: |
         echo "Checking out the $(Build.SourceBranchName) branch"
         curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
           -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-          -d "{\"path\": \"/Projects/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" ; \
+          -d "{\"path\": \"/Repos/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" ; \
           cat "/tmp/$(Build.SourceBranchName)-out.json" ; \
           grep -v error_code "/tmp/$(Build.SourceBranchName)-out.json"
       env:
@@ -57,7 +57,7 @@ stages:
       displayName: 'Update Staging project'
 
     - script: |
-        nutter run '/Projects/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report
+        nutter run '/Repos/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
@@ -102,17 +102,17 @@ stages:
           echo "Checking out the $(Build.SourceBranchName) branch"
           curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
             -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-            -d "{\"path\": \"/Projects/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" ; \
+            -d "{\"path\": \"/Repos/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" ; \
             cat "/tmp/$(Build.SourceBranchName)-out.json" ; \
             grep -v error_code "/tmp/$(Build.SourceBranchName)-out.json"
         env:
           DATABRICKS_HOST: $(DATABRICKS_HOST)
           DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
-        displayName: 'Update Staging project'
+        displayName: 'Update Staging repository'
 
 # We can do a separate set of the tests for release branches
       - script: |
-          nutter run '/Projects/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report
+          nutter run '/Repos/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report
         env:
           DATABRICKS_HOST: $(DATABRICKS_HOST)
           DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
