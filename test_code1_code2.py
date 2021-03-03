@@ -1,7 +1,5 @@
 # Databricks notebook source
-# install nutter in cluster if you want to trigger tests from command line
-%python
-%pip install -U nutter
+# MAGIC %pip install -U nutter
 
 # COMMAND ----------
 
