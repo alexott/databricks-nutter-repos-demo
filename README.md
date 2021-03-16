@@ -35,8 +35,9 @@ Your Databricks workspace needs to have Repos functionality enabled.  If it's en
 
 ![Create a staging repository](images/create-project-in-staging.png)
 
-  * Link it to the Git repository, similarly how you did it for your personal checkout 
+  * Link it to the Git repository, similarly how you did it for your personal checkout
   * Create the "Production" folder with repository inside, repeating two previous steps
+  * 
 * Create a new cluster that will be used for execution of the tests, you will need to pass the [cluster ID](https://docs.databricks.com/workspace/workspace-details.html#cluster-url-and-id) to the Nutter to execute the tests
 * Create a [personal access token (PAT)](https://docs.databricks.com/administration-guide/access-control/tokens.html) that will be used for execution of the tests & updating the repository
 
@@ -49,7 +50,7 @@ The Azure DevOps setup consists of the several steps, described in the next sect
 
 Because we have several pipelines, the it's makes sense to define [variable group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups) to store the data that are necessary for execution of tests & deployment of the code.  We need following configuration properties for execution of our pipelines:
 
-* `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (without `?o=`).
+* `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (host name with `https://`, without `?o=`).
 * `databricks_token` - personal access token for executing commands against the workspace.  Mark this variable as private!
 * `cluster_id` - the ID of the cluster where tests will be executed.
 
@@ -74,13 +75,15 @@ Azure DevOps can work with GitHub repositories as well - see [documentation](htt
 * Configure job & task:
   * Configure agent - in the "Agent Specification" select "ubuntu-18.04"
   * Click on "+" and find the "Command line" task
-  * Enter following code that will connect to the production environment & update the checkout of the repository (via [Repos REST API](https://docs.databricks.com/repos.html#projects-api-experimental)):
+  * Enter following code that will connect to the production environment & update the checkout of the repository (via [Repos REST API](https://docs.databricks.com/dev-tools/api/latest/repos.html)):
 
 ```sh
-curl -s -n -X POST -o "/tmp/releases-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
-     -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-     -d "{\"path\": \"/Repos/Production/databricks-nutter-projects-demo\", \"branch\": \"releases\"}" ; \
-cat "/tmp/releases-out.json" ; \
+curl -s -n -X GET -o /tmp/prod-repo-info.json "$DATABRICKS_HOST/api/2.0/workspace/get-status" -H "Authorization: Bearer $DATABRICKS_TOKEN" -d '{"path":"/Repos/Production/databricks-nutter-projects-demo"}'
+cat /tmp/prod-repo-info.json
+export RELEASE_REPOS_ID=$(cat /tmp/prod-repo-info.json|grep '"object_type":"REPO"'|sed -e 's|^.*"object_id":\([0-9]*\).*$|\1|')
+curl -s -n -X PATCH -o "/tmp/releases-out.json" "$DATABRICKS_HOST/api/2.0/repos/$RELEASE_REPOS_ID" \
+  -H "Authorization: Bearer $DATABRICKS_TOKEN" -d "{\"branch\": \"releases\"}"
+cat "/tmp/releases-out.json"
 grep -v error_code "/tmp/releases-out.json"
 ```
 

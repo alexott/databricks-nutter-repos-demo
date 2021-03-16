@@ -43,21 +43,23 @@ stages:
         python -m pip install --upgrade pip nutter
       displayName: 'Install dependencies'
 
-# https://docs.databricks.com/repos.html#projects-api-experimental
+# https://docs.databricks.com/dev-tools/api/latest/repos.html
     - script: |
         echo "Checking out the $(Build.SourceBranchName) branch"
-        curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
-          -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-          -d "{\"path\": \"/Repos/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" ; \
-          cat "/tmp/$(Build.SourceBranchName)-out.json" ; \
-          grep -v error_code "/tmp/$(Build.SourceBranchName)-out.json"
+        curl -s -n -X GET -o /tmp/staging-repo-info.json "$DATABRICKS_HOST/api/2.0/workspace/get-status" -H "Authorization: Bearer $DATABRICKS_TOKEN" -d '{"path":"/Repos/Staging/databricks-nutter-projects-demo"}'
+        cat /tmp/staging-repo-info.json
+        export STAGING_REPOS_ID=$(cat /tmp/staging-repo-info.json|grep '"object_type":"REPO"'|sed -e 's|^.*"object_id":\([0-9]*\).*$|\1|')
+        curl -s -n -X PATCH -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/repos/$STAGING_REPOS_ID" \
+          -H "Authorization: Bearer $DATABRICKS_TOKEN" -d "{\"branch\": \"$(Build.SourceBranchName)\"}"
+        cat "/tmp/$(Build.SourceBranchName)-out.json"
+        grep -v error_code "/tmp/$(Build.SourceBranchName)-out.json"
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
       displayName: 'Update Staging project'
 
     - script: |
-        nutter run '/Repos/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report
+        nutter run '/Repos/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report --timeout 500
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
@@ -71,10 +73,7 @@ stages:
 
 - stage: onRelease
   condition: |
-    or(
-      eq(variables['Build.SourceBranch'], 'refs/heads/releases'),
-      startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
-    )
+    eq(variables['Build.SourceBranch'], 'refs/heads/releases')
   jobs:
   - job: onReleaseJob
     pool:
@@ -99,12 +98,14 @@ stages:
         displayName: 'Install dependencies'
 
       - script: |
-          echo "Checking out the $(Build.SourceBranchName) branch"
-          curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
-            -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-            -d "{\"path\": \"/Repos/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" ; \
-            cat "/tmp/$(Build.SourceBranchName)-out.json" ; \
-            grep -v error_code "/tmp/$(Build.SourceBranchName)-out.json"
+          echo "Checking out the releases branch"
+          curl -s -n -X GET -o /tmp/prod-repo-info.json "$DATABRICKS_HOST/api/2.0/workspace/get-status" -H "Authorization: Bearer $DATABRICKS_TOKEN" -d '{"path":"/Repos/Production/databricks-nutter-projects-demo"}'
+          cat /tmp/prod-repo-info.json
+          export RELEASE_REPOS_ID=$(cat /tmp/prod-repo-info.json|grep '"object_type":"REPO"'|sed -e 's|^.*"object_id":\([0-9]*\).*$|\1|')
+          curl -s -n -X PATCH -o "/tmp/releases-out.json" "$DATABRICKS_HOST/api/2.0/repos/$RELEASE_REPOS_ID" \
+            -H "Authorization: Bearer $DATABRICKS_TOKEN" -d "{\"branch\": \"releases\"}"
+          cat "/tmp/releases-out.json"
+          grep -v error_code "/tmp/releases-out.json"
         env:
           DATABRICKS_HOST: $(DATABRICKS_HOST)
           DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
@@ -112,7 +113,7 @@ stages:
 
 # We can do a separate set of the tests for release branches
       - script: |
-          nutter run '/Repos/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report
+          nutter run '/Repos/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report --timeout 500
         env:
           DATABRICKS_HOST: $(DATABRICKS_HOST)
           DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
