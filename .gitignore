@@ -2,3 +2,5 @@
 /Release using Projects.json
 /test-*.xml
 /.DS_Store
+/images/.DS_Store
+/out
