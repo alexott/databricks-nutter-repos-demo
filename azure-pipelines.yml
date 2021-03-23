@@ -98,6 +98,7 @@ stages:
         displayName: 'Install dependencies'
 
       - script: |
+          set -x
           echo "Checking out the releases branch"
           curl -s -n -X GET -o /tmp/prod-repo-info.json "$DATABRICKS_HOST/api/2.0/workspace/get-status" -H "Authorization: Bearer $DATABRICKS_TOKEN" -d '{"path":"/Repos/Staging/databricks-nutter-projects-demo"}'
           cat /tmp/prod-repo-info.json
