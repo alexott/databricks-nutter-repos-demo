@@ -45,6 +45,7 @@ stages:
 
 # https://docs.databricks.com/dev-tools/api/latest/repos.html
     - script: |
+        set -x
         echo "Checking out the $(Build.SourceBranchName) branch"
         curl -s -n -X GET -o /tmp/staging-repo-info.json "$DATABRICKS_HOST/api/2.0/workspace/get-status" -H "Authorization: Bearer $DATABRICKS_TOKEN" -d '{"path":"/Repos/Staging/databricks-nutter-projects-demo"}'
         cat /tmp/staging-repo-info.json
