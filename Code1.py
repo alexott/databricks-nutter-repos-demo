@@ -12,4 +12,4 @@ dbutils.notebook.exit(greeting)
 
 # COMMAND ----------
 
-# just a change of the code
+# just a change of the code to trigger release
