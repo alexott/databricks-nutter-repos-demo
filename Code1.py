@@ -12,4 +12,4 @@ dbutils.notebook.exit(greeting)
 
 # COMMAND ----------
 
-# just a change
+# just a change of the code
