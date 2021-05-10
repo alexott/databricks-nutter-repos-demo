@@ -7,12 +7,18 @@ trigger:
   branches:
     include:
     - '*'
-
-  tags:
-    include:
-      - v*.*
-      - prod
-
+  pr:
+    - master
+    - releases
+  paths:
+    exclude:
+      - README.md
+      - images
+#  tags:
+#    include:
+#      - v*.*
+#      - prod
+      
 stages:
 - stage: onPush
   condition: |
