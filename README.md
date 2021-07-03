@@ -21,7 +21,7 @@ The development workflow is organized as on following image:
 
 Your Databricks workspace needs to have Repos functionality enabled.  If it's enabled, you should see the "Repos" icon in the navigation panel:
 
-* Fork repository into your environment - Github, or Azure DevOps (follow Databricks documentation on setting
+* Fork repository into your environment - Github, or Azure DevOps (follow Databricks documentation on using it)
 * In the Repos, click "Create Repo" and link it to the Git repository that you've forked - this will be your personal copy of the code that will be used for work:
 
 ![Create a personal repo](images/create-personal-project.png)
@@ -44,7 +44,7 @@ Your Databricks workspace needs to have Repos functionality enabled.  If it's en
 
 The Azure DevOps setup consists of the several steps, described in the next sections.  It's assumed that project in Azure DevOps already exists.
 
-We need to create a [personal access token (PAT)](https://docs.databricks.com/administration-guide/access-control/tokens.html) that will be used for execution of the tests & updating the repository.  This token will be used to authenticate to Databricks workspace, and then it will fetch configured token to authenticate to Git provider.  We also need to connect Databricks workspace to the Git provider - usually it's done by using the provider-specific access tokens - see [documentation](https://docs.databricks.com/repos.html#configure-your-git-integration-with-databricks) on details of setting the integration with specific Git provider (**note, that when repository is on Azure DevOps, you still need to generate Azure DevOps token to make API working**!). 
+We need to create a [personal access token (PAT)](https://docs.databricks.com/administration-guide/access-control/tokens.html) that will be used for execution of the tests & updating the repository.  This token will be used to authenticate to Databricks workspace, and then it will fetch configured token to authenticate to Git provider.  We also need to connect Databricks workspace to the Git provider - usually it's done by using the provider-specific access tokens - see [documentation](https://docs.databricks.com/repos.html#configure-your-git-integration-with-databricks) on details of setting the integration with specific Git provider (**note, that when repository is on Azure DevOps, you still need to generate Azure DevOps token to make API working**!, and also provide the user name in the Git settings). 
 
 > :warning: the previous instructions on using Repos + Azure DevOps with service principals weren't correct, so were removed!
 
