@@ -5,4 +5,8 @@ def generate_data1(n=1000, name='my_cool_data'):
 
 # COMMAND ----------
 
+# trigger release pipeline 
+
+# COMMAND ----------
+
 # just a change of the code to trigger release
