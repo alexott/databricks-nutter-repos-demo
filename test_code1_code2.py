@@ -11,7 +11,9 @@
 
 # COMMAND ----------
 
+# https://github.com/microsoft/nutter
 from runtime.nutterfixture import NutterFixture, tag
+# https://github.com/MrPowers/chispa
 from chispa.dataframe_comparer import *
 
 class Test1Fixture(NutterFixture):
@@ -21,10 +23,10 @@ class Test1Fixture(NutterFixture):
     self.code1_num_entries = 100
     NutterFixture.__init__(self)
     
-  def run_name1(self):
+  def run_code1(self):
     generate_data1(n = self.code1_num_entries, name = self.code1_view_name)
     
-  def assertion_name1(self):
+  def assertion_code1(self):
     df = spark.read.table(self.code1_view_name)
     assert(df.count() == self.code1_num_entries)
     
@@ -39,7 +41,7 @@ class Test1Fixture(NutterFixture):
   def after_code2(self):
     spark.sql(f"drop table {self.code2_table_name}")
     
-  # we're using Chispa library here to compare the content of the 
+  # we're using Chispa library here to compare the content of the processed dataframe with expected results
   def assertion_upper_columns(self):
     cols = ["col1", "col2", "col3"]
     df = spark.createDataFrame([("abc", "cef", 1)], cols)
