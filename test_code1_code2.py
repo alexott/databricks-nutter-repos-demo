@@ -1,5 +1,5 @@
 # Databricks notebook source
-# MAGIC %pip install -U nutter
+# MAGIC %pip install -U nutter chispa
 
 # COMMAND ----------
 
@@ -12,6 +12,7 @@
 # COMMAND ----------
 
 from runtime.nutterfixture import NutterFixture, tag
+from chispa.dataframe_comparer import *
 
 class Test1Fixture(NutterFixture):
   def __init__(self):
@@ -26,7 +27,7 @@ class Test1Fixture(NutterFixture):
   def assertion_name1(self):
     df = spark.read.table(self.code1_view_name)
     assert(df.count() == self.code1_num_entries)
-
+    
   def run_code2(self):
     generate_data2(table_name = self.code2_table_name)
     
@@ -37,6 +38,14 @@ class Test1Fixture(NutterFixture):
 
   def after_code2(self):
     spark.sql(f"drop table {self.code2_table_name}")
+    
+  # we're using Chispa library here to compare the content of the 
+  def assertion_upper_columns(self):
+    cols = ["col1", "col2", "col3"]
+    df = spark.createDataFrame([("abc", "cef", 1)], cols)
+    upper_df = upper_columns(df, cols)
+    expected_df = spark.createDataFrame([("ABC", "CEF", 1)], cols)
+    assert_df_equality(upper_df, expected_df)
 
 # COMMAND ----------
 
