@@ -80,6 +80,7 @@ stages:
       displayName: 'Execute Nutter tests'
 
     - task: PublishTestResults@2
+      condition: succeededOrFailed()
       inputs:
         testResultsFormat: 'JUnit'
         testResultsFiles: '**/test-*.xml' 
@@ -135,6 +136,7 @@ stages:
         displayName: 'Execute Nutter tests on release'
 
       - task: PublishTestResults@2
+        condition: succeededOrFailed()
         inputs:
           testResultsFormat: 'JUnit'
           testResultsFiles: '**/test-*.xml' 
