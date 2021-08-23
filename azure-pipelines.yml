@@ -54,6 +54,8 @@ stages:
 
     - script: |
         python -m pip install --upgrade pip nutter databricks-cli
+        databricks -v
+        databricks -h
       displayName: 'Install dependencies'
 
 # https://docs.databricks.com/dev-tools/api/latest/repos.html
@@ -104,7 +106,7 @@ stages:
         displayName: 'Checkout & Build.Reason: $(Build.Reason) & Build.SourceBranchName: $(Build.SourceBranchName)'
 
       - script: |
-          python -m pip install --upgrade pip nutter
+          python -m pip install --upgrade pip nutter databricks-cli
         displayName: 'Install dependencies'
 
       - script: |
