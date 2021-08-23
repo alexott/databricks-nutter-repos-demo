@@ -80,13 +80,8 @@ Azure DevOps can work with GitHub repositories as well - see [documentation](htt
   * Enter following code that will connect to the production environment & update the checkout of the repository (via [Repos REST API](https://docs.databricks.com/dev-tools/api/latest/repos.html)):
 
 ```sh
-curl -s -n -X GET -o /tmp/prod-repo-info.json "$DATABRICKS_HOST/api/2.0/workspace/get-status" -H "Authorization: Bearer $DATABRICKS_TOKEN" -d '{"path":"/Repos/Production/databricks-nutter-projects-demo"}'
-cat /tmp/prod-repo-info.json
-export RELEASE_REPOS_ID=$(cat /tmp/prod-repo-info.json|grep '"object_type":"REPO"'|sed -e 's|^.*"object_id":\([0-9]*\).*$|\1|')
-curl -s -n -X PATCH -o "/tmp/releases-out.json" "$DATABRICKS_HOST/api/2.0/repos/$RELEASE_REPOS_ID" \
-  -H "Authorization: Bearer $DATABRICKS_TOKEN" -d "{\"branch\": \"releases\"}"
-cat "/tmp/releases-out.json"
-grep -v error_code "/tmp/releases-out.json"
+python -m pip install --upgrade databricks-cli
+databricks repos update --path /Repos/Production/databricks-nutter-projects-demo --branch releases
 ```
 
   * Below the code, add environment variable `DATABRICKS_TOKEN` with value `$(DATABRICKS_TOKEN)` - this will pull it from the variable group into the script's execution context
