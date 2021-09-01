@@ -17,6 +17,7 @@ from runtime.nutterfixture import NutterFixture, tag
 #
 from chispa.dataframe_comparer import *
 
+
 class Test1Fixture(NutterFixture):
   def __init__(self):
     self.code2_table_name = "my_data"
