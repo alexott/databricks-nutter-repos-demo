@@ -50,7 +50,6 @@ class Test1Fixture(NutterFixture):
     expected_df = spark.createDataFrame([("ABC", "CEf", 1)], cols)
     assert_df_equality(upper_df, expected_df)
 
-
 # COMMAND ----------
 
 result = Test1Fixture().execute_tests()
