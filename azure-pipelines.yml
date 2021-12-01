@@ -1,6 +1,6 @@
 # Grab variables from the specific variable group
 variables:
-- group: 'Nutter Testing'
+- group: 'Databricks-environment'
 
 trigger:
   batch: true
