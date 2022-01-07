@@ -6,3 +6,4 @@ def generate_data2(table_name="my_data"):
 # COMMAND ----------
 
 # another release trigger one more change
+# test1
