@@ -1,15 +1,26 @@
 # Databricks notebook source
-default_name = "DefaultUnknown"
-
-dbutils.widgets.text("name", default_name, "Enter user name")
-user_name = dbutils.widgets.get("name")
-if user_name == "DefaultUnknown":
-  greeting = "ERROR"
-else:
-  greeting = f"Hello {user_name}"
-  
-dbutils.notebook.exit(greeting)
+import pyspark.sql.functions as F
+import pyspark.sql.types as T
+from pyspark.sql import DataFrame
 
 # COMMAND ----------
 
-# just change
+def generate_data1(n=1000, name='my_cool_data'):
+  df = spark.range(0, n)
+  df.createOrReplaceTempView(name)
+
+# COMMAND ----------
+
+def upper_columns(df: DataFrame, cols: list) -> DataFrame:
+    new_cols = []
+    for field in df.schema.fields:
+        if field.dataType == T.StringType() and field.name in cols:
+            new_cols.append(F.upper(F.col(field.name)).alias(field.name))
+        else:
+            new_cols.append(F.col(field.name))
+            
+    return df.select(*new_cols)
+
+# COMMAND ----------
+
+# just a change of the code to trigger release

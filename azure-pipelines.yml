@@ -7,12 +7,25 @@ trigger:
   branches:
     include:
     - '*'
+  paths:
+    exclude:
+      - README.md
+      - images
+#  tags:
+#    include:
+#      - v*.*
+#      - prod
 
-  tags:
+pr:
+  branches:
     include:
-      - v*.*
-      - prod
-
+      - master
+      - releases
+  paths:
+    exclude:
+      - README.md
+      - images
+      
 stages:
 - stage: onPush
   condition: |
@@ -41,29 +54,30 @@ stages:
 
     - script: |
         python -m pip install --upgrade pip nutter
+        # this is because of the old dependency inside Nutter
+        python -m pip install --upgrade databricks-cli
       displayName: 'Install dependencies'
 
-# https://docs.databricks.com/projects.html#projects-api-experimental
+# https://docs.databricks.com/dev-tools/api/latest/repos.html
+# this is simplification, and won't work with concurrent commits. Ideally it should be a
+# separate repo for each commit
     - script: |
         echo "Checking out the $(Build.SourceBranchName) branch"
-        curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
-          -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-          -d "{\"path\": \"/Projects/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" && \
-          cat "/tmp/$(Build.SourceBranchName)-out.json" && \
-          grep -v error_code "/tmp/$(Build.SourceBranchName)-out.json"
+        databricks repos update --path /Repos/Staging/databricks-nutter-projects-demo --branch "$(Build.SourceBranchName)"
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
       displayName: 'Update Staging project'
 
     - script: |
-        nutter run '/Projects/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report
+        nutter run '/Repos/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report --timeout 500
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
       displayName: 'Execute Nutter tests'
 
     - task: PublishTestResults@2
+      condition: succeededOrFailed()
       inputs:
         testResultsFormat: 'JUnit'
         testResultsFiles: '**/test-*.xml' 
@@ -71,10 +85,7 @@ stages:
 
 - stage: onRelease
   condition: |
-    or(
-      eq(variables['Build.SourceBranch'], 'refs/heads/releases'),
-      startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
-    )
+    eq(variables['Build.SourceBranch'], 'refs/heads/releases')
   jobs:
   - job: onReleaseJob
     pool:
@@ -96,29 +107,28 @@ stages:
 
       - script: |
           python -m pip install --upgrade pip nutter
+          # this is because of the old dependency inside Nutter
+          python -m pip install --upgrade databricks-cli
         displayName: 'Install dependencies'
 
       - script: |
-          echo "Checking out the $(Build.SourceBranchName) branch"
-          curl -s -n -X POST -o "/tmp/$(Build.SourceBranchName)-out.json" "$DATABRICKS_HOST/api/2.0/projects/fetch-and-checkout" \
-            -H "Authorization: Bearer $DATABRICKS_TOKEN" \
-            -d "{\"path\": \"/Projects/Staging/databricks-nutter-projects-demo\", \"branch\": \"$(Build.SourceBranchName)\"}" && \
-            cat "/tmp/$(Build.SourceBranchName)-out.json" && \
-            grep -v error_code "/tmp/$(Build.SourceBranchName)-out.json"
+          echo "Checking out the releases branch"
+          databricks repos update --path /Repos/Staging/databricks-nutter-projects-demo --branch "$(Build.SourceBranchName)"
         env:
           DATABRICKS_HOST: $(DATABRICKS_HOST)
           DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
-        displayName: 'Update Staging project'
+        displayName: 'Update Staging repository'
 
 # We can do a separate set of the tests for release branches
       - script: |
-          nutter run '/Projects/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report
+          nutter run '/Repos/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report --timeout 500
         env:
           DATABRICKS_HOST: $(DATABRICKS_HOST)
           DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
         displayName: 'Execute Nutter tests on release'
 
       - task: PublishTestResults@2
+        condition: succeededOrFailed()
         inputs:
           testResultsFormat: 'JUnit'
           testResultsFiles: '**/test-*.xml' 
