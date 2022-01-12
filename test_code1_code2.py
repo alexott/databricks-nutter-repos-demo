@@ -14,7 +14,6 @@
 # https://github.com/microsoft/nutter
 from runtime.nutterfixture import NutterFixture, tag
 # https://github.com/MrPowers/chispa
-#
 from chispa.dataframe_comparer import *
 
 
@@ -58,7 +57,3 @@ print(result.to_string())
 is_job = dbutils.notebook.entry_point.getDbutils().notebook().getContext().currentRunId().isDefined()
 if is_job:
   result.exit(dbutils)
-
-# COMMAND ----------
-
-# just commit
