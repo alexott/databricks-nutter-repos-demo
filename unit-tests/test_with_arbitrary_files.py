@@ -33,7 +33,7 @@ class TestFixtureArbitraryFiles(NutterFixture):
     assert(df.count() == self.code1_num_entries)
     
   def run_code2_arbitrary_files(self):
-    generate_data2(spark, table_name = self.code2_table_name)
+    generate_data2(table_name = self.code2_table_name)
     
   def assertion_code2_arbitrary_files(self):
     some_tbl = sqlContext.sql(f'SELECT COUNT(*) AS total FROM {self.code2_table_name}')
