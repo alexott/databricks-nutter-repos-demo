@@ -1,4 +1,8 @@
-This repository contains notebooks & instructions for setting up the demo of development workflow & CI/CD (on Azure DevOps) using the Databricks notebooks and [Repos feature](https://docs.databricks.com/repos.html).  Testing of notebooks is done using the [Nutter library](https://github.com/microsoft/nutter) developed by Microsoft.  The "main" code is in the notebooks `Code1.py` and `Code2.py`, and the testing code is in the `test_code1_code2.py`.
+This repository contains notebooks & instructions for setting up the demo of development workflow & CI/CD (on Azure DevOps) using the Databricks notebooks and [Repos feature](https://docs.databricks.com/repos.html).  Testing of notebooks is done using the [Nutter library](https://github.com/microsoft/nutter) developed by Microsoft.  
+
+Two approaches are demonstrated:
+1. Using notebooks & including the code using `%run` ([doc](https://docs.databricks.com/notebooks/notebooks-use.html#run)) - the "main" code is in the notebooks `Code1.py` and `Code2.py`, and the testing code is in the `unit-tests/test_with_percent_run.py`.
+1. Using notebook for test itself, but including main code as Python packages using [arbitrary files in Repos](https://docs.databricks.com/repos.html#work-with-non-notebook-files-in-a-databricks-repo) functionality (DBR 9.1+).  Main code is in the `my_package/code1.py` and `my_package/code2.py` files, and test is in `unit-tests/test_with_arbitrary_files.py`.
 
 This demo shows how you can use Repos to work on your own copy of notebooks, test them after commit in the "staging" environment, and promote to "production" on successful testing of `releases` branch.
 
@@ -54,7 +58,7 @@ Because we have several pipelines, the it's makes sense to define [variable grou
 
 * `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (host name with `https://`, without `?o=`, and without trailing slash character.  For example: `https://adb-1568830229861029.9.azuredatabricks.net`).
 * `databricks_token` - personal access token for executing commands against the workspace.  Mark this variable as private!  Note that if you're using Azure DevOps to host repository, then you need to use AAD token instead (see instructions below).
-* `cluster_id` - the ID of the cluster where tests will be executed.
+* `cluster_id` - the ID of the cluster where tests will be executed. DBR 9.1+ should be used to support arbitrary files
 
 The name of the variable group is used in the [azure-pipelines.yml](azure-pipelines.yml). By default its name is "Nutter Testing".  Change the [azure-pipelines.yml](azure-pipelines.yml) if you use another name for variable group.
 

@@ -70,7 +70,7 @@ stages:
       displayName: 'Update Staging project'
 
     - script: |
-        nutter run '/Repos/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report --timeout 500
+        nutter run '/Repos/Staging/databricks-nutter-projects-demo/unit-tests/' --cluster_id $(CLUSTER_ID) --recursive --junit_report --timeout 500
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
