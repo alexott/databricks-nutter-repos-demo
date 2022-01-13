@@ -16,7 +16,7 @@ from runtime.nutterfixture import NutterFixture, tag
 # https://github.com/MrPowers/chispa
 from chispa.dataframe_comparer import *
 
-class Test1Fixture(NutterFixture):
+class TestPercentRunFixture(NutterFixture):
   def __init__(self):
     self.code2_table_name = "my_data"
     self.code1_view_name = "my_cool_data"
@@ -51,7 +51,7 @@ class Test1Fixture(NutterFixture):
 
 # COMMAND ----------
 
-result = Test1Fixture().execute_tests()
+result = TestPercentRunFixture().execute_tests()
 print(result.to_string())
 is_job = dbutils.notebook.entry_point.getDbutils().notebook().getContext().currentRunId().isDefined()
 if is_job:
