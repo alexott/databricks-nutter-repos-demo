@@ -62,7 +62,7 @@ Because we have several pipelines, the it's makes sense to define [variable grou
 
 The name of the variable group is used in the [azure-pipelines.yml](azure-pipelines.yml). By default its name is "Nutter Testing".  Change the [azure-pipelines.yml](azure-pipelines.yml) if you use another name for variable group.
 
-### Create the build pipeline
+### Create a build pipeline
 
 Azure DevOps can work with GitHub repositories as well - see [documentation](https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/github) for more details on how to link DevOps with GitHub.
 
@@ -72,7 +72,7 @@ Azure DevOps can work with GitHub repositories as well - see [documentation](htt
 * Save pipeline
 
 
-### Create the release pipeline
+### Create a release pipeline
 
 * In the Azure DevOps, in the Pipelines section, select Releases, and click "New release pipeline"
 * Select "Empty Job" in the dialog
