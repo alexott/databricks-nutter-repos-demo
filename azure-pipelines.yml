@@ -63,7 +63,8 @@ stages:
 # separate repo for each commit
     - script: |
         echo "Checking out the $(Build.SourceBranchName) branch"
-        databricks repos update --path /Repos/staging_azure_devops_rohan/databricks-nutter-projects-demo --branch "$(Build.SourceBranchName)"
+        #databricks repos update --path /Repos/staging_azure_devops_rohan/databricks-nutter-projects-demo --branch "$(Build.SourceBranchName)"
+        databricks repos update --repo-id 2291663850756803 --branch "$(Build.SourceBranchName)"
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
