@@ -1,6 +1,6 @@
 # Grab variables from the specific variable group
 variables:
-- group: 'Nutter Testing on DevOps'
+- group: 'petronas-dbx'
 
 trigger:
   batch: true
