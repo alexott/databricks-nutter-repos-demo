@@ -133,4 +133,3 @@ stages:
           testResultsFormat: 'JUnit'
           testResultsFiles: '**/test-*.xml' 
           failTaskOnFailedTests: true
-
