@@ -58,15 +58,15 @@ stages:
         python -m pip install --upgrade databricks-cli
       displayName: 'Install dependencies'
 
-    - script: |
-        echo [DEFAULT] >> ~/.databrickscfg
-        echo host = $DATABRICKS_HOST >> ~/.databrickscfg
-        echo token = $DATABRICKS_TOKEN >> ~/.databrickscfg
-        cat  ~/.databrickscfg
-      env:
-        DATABRICKS_HOST: $(db_host_test)
-        DATABRICKS_TOKEN: $(db_token_test)
-      displayName: ‘Configure Databricks CLI’
+    #- script: |
+    #    echo [DEFAULT] >> ~/.databrickscfg
+    #    echo host = $DATABRICKS_HOST >> ~/.databrickscfg
+    #    echo token = $DATABRICKS_TOKEN >> ~/.databrickscfg
+    #    cat  ~/.databrickscfg
+    #  env:
+    #    DATABRICKS_HOST: $(db_host_test)
+    #    DATABRICKS_TOKEN: $(db_token_test)
+    #  displayName: ‘Configure Databricks CLI’
 
 
 # https://docs.databricks.com/dev-tools/api/latest/repos.html
@@ -74,11 +74,11 @@ stages:
 # separate repo for each commit
     - script: |
         echo "Checking out the $(Build.SourceBranchName) branch"
-        #databricks repos update --path /Repos/staging_azure_devops_rohan/databricks-nutter-projects-demo --branch "$(Build.SourceBranchName)"
-        databricks repos update --repo-id 2291663850756803 --branch "$(Build.SourceBranchName)"
-      #env:
-        #DATABRICKS_HOST: $(DATABRICKS_HOST)
-        #DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+        databricks repos update --path /Repos/staging_azure_devops_rohan/databricks-nutter-projects-demo --branch "$(Build.SourceBranchName)"
+        #databricks repos update --repo-id 2291663850756803 --branch "$(Build.SourceBranchName)"
+      env:
+        DATABRICKS_HOST: $(DATABRICKS_HOST)
+        DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
       displayName: 'Update Staging project'
 
     - script: |
