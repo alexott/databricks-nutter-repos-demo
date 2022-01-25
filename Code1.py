@@ -4,9 +4,7 @@ import pyspark.sql.types as T
 from pyspark.sql import DataFrame
 
 # COMMAND ----------
-
-#this function creates a dataframe
-#this is test comment
+#removed all the comments
 def generate_data1(n=1000, name='my_cool_data'):
   df = spark.range(0, n)
   df.createOrReplaceTempView(name)
