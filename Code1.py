@@ -6,9 +6,7 @@ from pyspark.sql import DataFrame
 # COMMAND ----------
 
 #removed all the comments
-#added comments for branch6
-#added comment for another testing
-#added comment for branch8
+#testing for another change
 def generate_data1(n=1000, name='my_cool_data'):
   df = spark.range(0, n)
   df.createOrReplaceTempView(name)
