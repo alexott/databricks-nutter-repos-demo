@@ -5,14 +5,13 @@ from pyspark.sql import DataFrame
 
 # COMMAND ----------
 
-#removed all the comments
-#testing for another change
 def generate_data1(n=1000, name='my_cool_data'):
   df = spark.range(0, n)
   df.createOrReplaceTempView(name)
 
 # COMMAND ----------
 
+#removed comments from top and added here
 def upper_columns(df: DataFrame, cols: list) -> DataFrame:
     new_cols = []
     for field in df.schema.fields:
