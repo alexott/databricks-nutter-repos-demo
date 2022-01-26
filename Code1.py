@@ -12,6 +12,7 @@ def generate_data1(n=1000, name='my_cool_data'):
 # COMMAND ----------
 
 #removed comments from top and added here
+#testing it at 11.35 am
 def upper_columns(df: DataFrame, cols: list) -> DataFrame:
     new_cols = []
     for field in df.schema.fields:
