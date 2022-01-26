@@ -7,6 +7,8 @@ trigger:
   branches:
     include:
     - '*'
+    exclude:
+    - master
   paths:
     exclude:
       - README.md
@@ -20,7 +22,7 @@ pr:
   branches:
     include:
       - master
-      - releases
+#      - releases
   paths:
     exclude:
       - README.md
