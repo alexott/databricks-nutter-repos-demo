@@ -4,3 +4,6 @@
 /.DS_Store
 /images/.DS_Store
 /out
+/terraform/azuredevops/.terraform/
+/terraform/azuredevops/.terraform.lock.hcl
+/terraform/azuredevops/terraform.tfvars
