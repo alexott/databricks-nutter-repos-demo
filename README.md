@@ -67,10 +67,10 @@ We need to create a [personal access token (PAT)](https://docs.databricks.com/ad
 
 Because we have several pipelines, the it's makes sense to define [variable group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups) to store the data that are necessary for execution of tests & deployment of the code.  We need following configuration properties for execution of our pipelines:
 
-* `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (host name with `https://`, without `?o=`, and without trailing slash character.  For example: `https://adb-1568830229861029.9.azuredatabricks.net`).
+* `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (host name with `https://`, without `?o=`, and **without trailing slash character**.  For example: `https://adb-1568830229861029.9.azuredatabricks.net`).
 * `databricks_token` - personal access token for executing commands against the workspace.  Mark this variable as private!  Note that if you're using Azure DevOps to host repository, then you need to use AAD token instead (see instructions below).
 * `cluster_id` - the ID of the cluster where tests will be executed. DBR 9.1+ should be used to support arbitrary files.
-* `staging_directory` - the directory for staging checkout that we created above. For example, `/Repos/Staging/databricks-nutter-projects-demo`.
+* `staging_directory` - the directory for staging checkout that we created above. For example, `/Repos/Staging/databricks-nutter-repos-demo`.
 
 The name of the variable group is used in the [azure-pipelines.yml](azure-pipelines.yml). By default its name is "Nutter Testing".  Change the [azure-pipelines.yml](azure-pipelines.yml) if you use another name for variable group.
 
@@ -97,7 +97,7 @@ Azure DevOps can work with GitHub repositories as well - see [documentation](htt
 
 ```sh
 python -m pip install --upgrade databricks-cli
-databricks repos update --path /Repos/Production/databricks-nutter-projects-demo --branch releases
+databricks repos update --path /Repos/Production/databricks-nutter-repos-demo --branch releases
 ```
 
   * Below the code, add environment variable `DATABRICKS_TOKEN` with value `$(DATABRICKS_TOKEN)` - this will pull it from the variable group into the script's execution context
