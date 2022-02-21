@@ -1,6 +1,13 @@
-# Grab variables from the specific variable group
+# Grab variables from the specific variable group and
+# determine sourceBranchName (avoids SourchBranchName=merge
+# for PR)
 variables:
-- group: 'Nutter Testing'
+  - group: 'Nutter Testing'
+  - name: 'branchName'
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
+      value: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+      value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
 
 trigger:
   batch: true
@@ -64,8 +71,8 @@ stages:
 # this is simplification, and won't work with concurrent commits. Ideally it should be a
 # separate repo for each commit
     - script: |
-        echo "Checking out the $(Build.SourceBranchName) branch"
-        databricks repos update --path $(STAGING_DIRECTORY) --branch "$(Build.SourceBranchName)"
+        echo "Checking out the $(branchName) branch"
+        databricks repos update --path $(STAGING_DIRECTORY) --branch "$(branchName)"
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
