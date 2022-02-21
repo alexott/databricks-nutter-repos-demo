@@ -6,6 +6,17 @@ Two approaches are demonstrated:
 
 This demo shows how you can use Repos to work on your own copy of notebooks, test them after commit in the "staging" environment, and promote to "production" on successful testing of `releases` branch.
 
+* [The workflow](#the-workflow)
+* [Setup on Databricks side](#setup-on-databricks-side)
+* [Setup Azure DevOps pipelines](#setup-azure-devops-pipelines)
+      * [Create variables group to keep common configuration](#create-variables-group-to-keep-common-configuration)
+      * [Create a build pipeline](#create-a-build-pipeline)
+      * [Create a release pipeline](#create-a-release-pipeline)
+* [FAQ &amp; Troubleshooting](#faq--troubleshooting)
+   * [I'm getting "Can’t find repo ID for /Repos/..." when trying to update a repo](#im-getting-cant-find-repo-id-for-repos-when-trying-to-update-a-repo)
+   * [How can I perform Repos operations using the service principal?](#how-can-i-perform-repos-operations-using-the-service-principal)
+
+
 # The workflow
 
 The development workflow is organized as on following image:
@@ -101,3 +112,13 @@ databricks repos update --path /Repos/Production/databricks-nutter-projects-demo
 * Save the pipeline
 
 After all of this done, the release pipeline will be automatically executed on every successful build in the `releases` branch.
+
+# FAQ & Troubleshooting
+
+## I'm getting "Can’t find repo ID for /Repos/..." when trying to update a repo
+
+This often happens when you're trying to use `databricks repos update` for workspace that have IP Access Lists enabled.  The error message is a misleading, and will be fixed by [this pull request](https://github.com/databricks/databricks-cli/pull/428).
+
+## How can I perform Repos operations using the service principal?
+
+To perform operations on Repos (update, etc.) we need to associate a Git token with identity that performs that operation.  But as of right now (February 2022nd), we can setup Git token only UI, and there is no official REST API for that.  So, until the REST API is implemented, it's not possible to use service principals for operations on Repos.
