@@ -25,15 +25,15 @@ trigger:
 #      - prod
 
 # This need an additional debugging
-# pr:
-#   branches:
-#     include:
-#       - master
-#       - releases
-#   paths:
-#     exclude:
-#       - README.md
-#       - images
+pr:
+  branches:
+    include:
+      - master
+      - releases
+  paths:
+    exclude:
+      - README.md
+      - images
       
 stages:
 - stage: onPush
