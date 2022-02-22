@@ -72,7 +72,7 @@ stages:
 # separate repo for each commit
     - script: |
         echo "Checking out the $(branchName) branch"
-        if [ "$(System.PullRequest.IsFork)" = "True" ]; else
+        if [ "$(System.PullRequest.IsFork)" = "True" ]; then
           echo "PullRequestId=$(System.PullRequest.PullRequestId)"
           echo "SourceBranch=$(System.PullRequest.SourceBranch) TargetBranch=$(System.PullRequest.TargetBranch)"
           echo "SourceRepositoryURI=$(System.PullRequest.SourceRepositoryURI)"
