@@ -72,6 +72,9 @@ stages:
 # separate repo for each commit
     - script: |
         echo "Checking out the $(branchName) branch"
+        echo "IsFork=$(System.PullRequest.IsFork) PullRequestId=$(System.PullRequest.PullRequestId)"
+        echo "SourceBranch=$(System.PullRequest.SourceBranch) TargetBranch=$(System.PullRequest.TargetBranch)"
+        echo "SourceRepositoryURI=$(System.PullRequest.SourceRepositoryURI)"
         env
         databricks repos update --path $(STAGING_DIRECTORY) --branch "$(branchName)"
       env:
