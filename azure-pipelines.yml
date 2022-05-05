@@ -17,8 +17,11 @@ trigger:
   paths:
     exclude:
       - README.md
+      - LICENSE
       - images
       - terraform
+      - .github
+
 #  tags:
 #    include:
 #      - v*.*
