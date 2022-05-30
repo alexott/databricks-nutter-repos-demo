@@ -1,6 +1,13 @@
-# Grab variables from the specific variable group
+# Grab variables from the specific variable group and
+# determine sourceBranchName (avoids SourchBranchName=merge
+# for PR)
 variables:
-- group: 'Nutter Testing'
+  - group: 'Nutter Testing'
+  - name: 'branchName'
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/heads/') }}:
+      value: $[ replace(variables['Build.SourceBranch'], 'refs/heads/', '') ]
+    ${{ if startsWith(variables['Build.SourceBranch'], 'refs/pull/') }}:
+      value: $[ replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '') ]
 
 trigger:
   batch: true
@@ -10,21 +17,26 @@ trigger:
   paths:
     exclude:
       - README.md
+      - LICENSE
       - images
+      - terraform
+      - .github
+
 #  tags:
 #    include:
 #      - v*.*
 #      - prod
 
-pr:
-  branches:
-    include:
-      - master
-      - releases
-  paths:
-    exclude:
-      - README.md
-      - images
+# This need an additional debugging
+# pr:
+#   branches:
+#     include:
+#       - master
+#       - releases
+#   paths:
+#     exclude:
+#       - README.md
+#       - images
       
 stages:
 - stage: onPush
@@ -62,15 +74,15 @@ stages:
 # this is simplification, and won't work with concurrent commits. Ideally it should be a
 # separate repo for each commit
     - script: |
-        echo "Checking out the $(Build.SourceBranchName) branch"
-        databricks repos update --path /Repos/Staging/databricks-nutter-projects-demo --branch "$(Build.SourceBranchName)"
+        echo "Checking out the $(branchName) branch"
+        databricks repos update --path $(STAGING_DIRECTORY) --branch "$(branchName)"
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
       displayName: 'Update Staging project'
 
     - script: |
-        nutter run '/Repos/Staging/databricks-nutter-projects-demo/unit-tests/' --cluster_id $(CLUSTER_ID) --recursive --junit_report --timeout 500
+        nutter run "$(STAGING_DIRECTORY)/unit-tests/" --cluster_id $(CLUSTER_ID) --recursive --junit_report --timeout 500
       env:
         DATABRICKS_HOST: $(DATABRICKS_HOST)
         DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
@@ -113,7 +125,7 @@ stages:
 
       - script: |
           echo "Checking out the releases branch"
-          databricks repos update --path /Repos/Staging/databricks-nutter-projects-demo --branch "$(Build.SourceBranchName)"
+          databricks repos update --path $(STAGING_DIRECTORY) --branch "$(Build.SourceBranchName)"
         env:
           DATABRICKS_HOST: $(DATABRICKS_HOST)
           DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
@@ -121,7 +133,7 @@ stages:
 
 # We can do a separate set of the tests for release branches
       - script: |
-          nutter run '/Repos/Staging/databricks-nutter-projects-demo/' --cluster_id $(CLUSTER_ID) --recursive --junit_report --timeout 500
+          nutter run "$(STAGING_DIRECTORY)/unit-tests" --cluster_id $(CLUSTER_ID) --recursive --junit_report --timeout 500
         env:
           DATABRICKS_HOST: $(DATABRICKS_HOST)
           DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)

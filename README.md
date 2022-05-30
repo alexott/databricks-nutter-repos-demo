@@ -6,6 +6,17 @@ Two approaches are demonstrated:
 
 This demo shows how you can use Repos to work on your own copy of notebooks, test them after commit in the "staging" environment, and promote to "production" on successful testing of `releases` branch.
 
+* [The workflow](#the-workflow)
+* [Setup on Databricks side](#setup-on-databricks-side)
+* [Setup Azure DevOps pipelines](#setup-azure-devops-pipelines)
+      * [Create variables group to keep common configuration](#create-variables-group-to-keep-common-configuration)
+      * [Create a build pipeline](#create-a-build-pipeline)
+      * [Create a release pipeline](#create-a-release-pipeline)
+* [FAQ &amp; Troubleshooting](#faq--troubleshooting)
+   * [I'm getting "Can’t find repo ID for /Repos/..." when trying to update a repo](#im-getting-cant-find-repo-id-for-repos-when-trying-to-update-a-repo)
+   * [How can I perform Repos operations using the service principal?](#how-can-i-perform-repos-operations-using-the-service-principal)
+
+
 # The workflow
 
 The development workflow is organized as on following image:
@@ -56,13 +67,14 @@ We need to create a [personal access token (PAT)](https://docs.databricks.com/ad
 
 Because we have several pipelines, the it's makes sense to define [variable group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups) to store the data that are necessary for execution of tests & deployment of the code.  We need following configuration properties for execution of our pipelines:
 
-* `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (host name with `https://`, without `?o=`, and without trailing slash character.  For example: `https://adb-1568830229861029.9.azuredatabricks.net`).
+* `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (host name with `https://`, without `?o=`, and **without trailing slash character**.  For example: `https://adb-1568830229861029.9.azuredatabricks.net`).
 * `databricks_token` - personal access token for executing commands against the workspace.  Mark this variable as private!  Note that if you're using Azure DevOps to host repository, then you need to use AAD token instead (see instructions below).
-* `cluster_id` - the ID of the cluster where tests will be executed. DBR 9.1+ should be used to support arbitrary files
+* `cluster_id` - the ID of the cluster where tests will be executed. DBR 9.1+ should be used to support arbitrary files.
+* `staging_directory` - the directory for staging checkout that we created above. For example, `/Repos/Staging/databricks-nutter-repos-demo`.
 
 The name of the variable group is used in the [azure-pipelines.yml](azure-pipelines.yml). By default its name is "Nutter Testing".  Change the [azure-pipelines.yml](azure-pipelines.yml) if you use another name for variable group.
 
-### Create the build pipeline
+### Create a build pipeline
 
 Azure DevOps can work with GitHub repositories as well - see [documentation](https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/github) for more details on how to link DevOps with GitHub.
 
@@ -72,7 +84,7 @@ Azure DevOps can work with GitHub repositories as well - see [documentation](htt
 * Save pipeline
 
 
-### Create the release pipeline
+### Create a release pipeline
 
 * In the Azure DevOps, in the Pipelines section, select Releases, and click "New release pipeline"
 * Select "Empty Job" in the dialog
@@ -85,7 +97,7 @@ Azure DevOps can work with GitHub repositories as well - see [documentation](htt
 
 ```sh
 python -m pip install --upgrade databricks-cli
-databricks repos update --path /Repos/Production/databricks-nutter-projects-demo --branch releases
+databricks repos update --path /Repos/Production/databricks-nutter-repos-demo --branch releases
 ```
 
   * Below the code, add environment variable `DATABRICKS_TOKEN` with value `$(DATABRICKS_TOKEN)` - this will pull it from the variable group into the script's execution context
@@ -100,3 +112,13 @@ databricks repos update --path /Repos/Production/databricks-nutter-projects-demo
 * Save the pipeline
 
 After all of this done, the release pipeline will be automatically executed on every successful build in the `releases` branch.
+
+# FAQ & Troubleshooting
+
+## I'm getting "Can’t find repo ID for /Repos/..." when trying to update a repo
+
+This often happens when you're trying to use `databricks repos update` for workspace that have IP Access Lists enabled.  The error message is a misleading, and will be fixed by [this pull request](https://github.com/databricks/databricks-cli/pull/428).
+
+## How can I perform Repos operations using the service principal?
+
+To perform operations on Repos (update, etc.) we need to associate a Git token with identity that performs that operation.  But as of right now (February 2022nd), we can setup Git token only UI, and there is no official REST API for that.  So, until the REST API is implemented, it's not possible to use service principals for operations on Repos.
