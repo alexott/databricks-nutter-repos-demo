@@ -3,6 +3,7 @@ data "databricks_current_user" "me" {
 
 locals {
   staging_repo_path = "${data.databricks_current_user.me.repos}/nutter-tf-staging"
+}
 
 resource "databricks_git_credential" "global" {
   git_provider          = "azureDevOpsServices"
