@@ -48,16 +48,16 @@ stages:
   jobs:
   - job: onPushJob
     pool:
-      vmImage: 'ubuntu-18.04'
+      vmImage: 'ubuntu-20.04'
 
     steps:
     - script: env | sort
       displayName: 'Environment / Context'
 
     - task: UsePythonVersion@0
-      displayName: 'Use Python 3.7'
+      displayName: 'Use Python 3.8'
       inputs:
-        versionSpec: 3.7
+        versionSpec: 3.8
 
     - checkout: self
       persistCredentials: true
@@ -101,16 +101,16 @@ stages:
   jobs:
   - job: onReleaseJob
     pool:
-      vmImage: 'ubuntu-18.04'
+      vmImage: 'ubuntu-20.04'
 
     steps:
       - script: env | sort
         displayName: 'Environment / Context'
 
       - task: UsePythonVersion@0
-        displayName: 'Use Python 3.7'
+        displayName: 'Use Python 3.8'
         inputs:
-          versionSpec: 3.7
+          versionSpec: 3.8
 
       - checkout: self
         persistCredentials: true
