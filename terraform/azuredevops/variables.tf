@@ -16,6 +16,6 @@ variable "devops_user_name" {
 
 variable "devops_project_name" {
   description = "Project name in Azure DevOps"
-  type = string
-  default = "NutterDemoProject"
+  type        = string
+  default     = "NutterDemoProject"
 }

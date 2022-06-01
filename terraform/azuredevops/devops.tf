@@ -50,9 +50,9 @@ resource "azuredevops_variable_group" "vg" {
   }
 
   variable {
-    name      = "databricks_token"
-    value     = databricks_token.pat_for_devops.token_value
-    is_secret = true
+    name         = "databricks_token"
+    secret_value = databricks_token.pat_for_devops.token_value
+    is_secret    = true
   }
 
   variable {

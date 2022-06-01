@@ -1,4 +1,4 @@
-This repository contains notebooks & instructions for setting up the demo of development workflow & CI/CD (on Azure DevOps) using the Databricks notebooks and [Repos feature](https://docs.databricks.com/repos.html).  Testing of notebooks is done using the [Nutter library](https://github.com/microsoft/nutter) developed by Microsoft.  
+This repository contains notebooks & instructions for setting up the demo of development workflow & CI/CD (on Azure DevOps) using the Databricks notebooks and [Repos feature](https://docs.databricks.com/repos.html).  Testing of notebooks is done using the [Nutter library](https://github.com/microsoft/nutter) developed by Microsoft.
 
 Two approaches are demonstrated:
 1. Using notebooks & including the code using `%run` ([doc](https://docs.databricks.com/notebooks/notebooks-use.html#run)) - the "main" code is in the notebooks `Code1.py` and `Code2.py`, and the testing code is in the `unit-tests/test_with_percent_run.py`.
@@ -15,6 +15,8 @@ This demo shows how you can use Repos to work on your own copy of notebooks, tes
 * [FAQ &amp; Troubleshooting](#faq--troubleshooting)
    * [I'm getting "Can’t find repo ID for /Repos/..." when trying to update a repo](#im-getting-cant-find-repo-id-for-repos-when-trying-to-update-a-repo)
    * [How can I perform Repos operations using the service principal?](#how-can-i-perform-repos-operations-using-the-service-principal)
+
+There is a possibility of automated setup of this demo using the Terraform.  Look into [terraform](terraform) folder for existing implementations.
 
 
 # The workflow
