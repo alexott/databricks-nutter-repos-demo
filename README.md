@@ -123,4 +123,6 @@ This often happens when you're trying to use `databricks repos update` for works
 
 ## How can I perform Repos operations using the service principal?
 
-To perform operations on Repos (update, etc.) we need to associate a Git token with identity that performs that operation.  But as of right now (February 2022nd), we can setup Git token only UI, and there is no official REST API for that.  So, until the REST API is implemented, it's not possible to use service principals for operations on Repos.
+To perform operations on Repos (update, etc.) we need to associate a Git token with an identity that performs that operation. Please see the following documentation:
+* [CICD with SPNs](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/ci-cd/ci-cd-sp)
+* [Git Credentials REST API](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/gitcredentials) 
