@@ -35,7 +35,7 @@ class TestPercentRunFixture(NutterFixture):
     generate_data2(table_name = self.code2_table_name)
     
   def assertion_code2_percent_run(self):
-    some_tbl = sqlContext.sql(f'SELECT COUNT(*) AS total FROM {self.code2_table_name}')
+    some_tbl = spark.sql(f'SELECT COUNT(*) AS total FROM {self.code2_table_name}')
     first_row = some_tbl.first()
     assert (first_row[0] == 10)
 

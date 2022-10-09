@@ -1,13 +1,13 @@
 # Databricks notebook source
 import pyspark.sql.functions as F
 import pyspark.sql.types as T
-from pyspark.sql import DataFrame
+from pyspark.sql import DataFrame, SparkSession
 
 # COMMAND ----------
 
 def generate_data1(n=1000, name='my_cool_data'):
-  df = spark.range(0, n)
-  df.createOrReplaceTempView(name)
+    df = SparkSession.getActiveSession().range(0, n)
+    df.createOrReplaceTempView(name)
 
 # COMMAND ----------
 

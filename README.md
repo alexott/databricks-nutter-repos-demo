@@ -9,9 +9,9 @@ This demo shows how you can use Repos to work on your own copy of notebooks, tes
 * [The workflow](#the-workflow)
 * [Setup on Databricks side](#setup-on-databricks-side)
 * [Setup Azure DevOps pipelines](#setup-azure-devops-pipelines)
-      * [Create variables group to keep common configuration](#create-variables-group-to-keep-common-configuration)
-      * [Create a build pipeline](#create-a-build-pipeline)
-      * [Create a release pipeline](#create-a-release-pipeline)
+  * [Create variables group to keep common configuration](#create-variables-group-to-keep-common-configuration)
+  * [Create a build pipeline](#create-a-build-pipeline)
+  * [Create a release pipeline](#create-a-release-pipeline)
 * [FAQ &amp; Troubleshooting](#faq--troubleshooting)
    * [I'm getting "Can’t find repo ID for /Repos/..." when trying to update a repo](#im-getting-cant-find-repo-id-for-repos-when-trying-to-update-a-repo)
    * [How can I perform Repos operations using the service principal?](#how-can-i-perform-repos-operations-using-the-service-principal)
@@ -123,4 +123,6 @@ This often happens when you're trying to use `databricks repos update` for works
 
 ## How can I perform Repos operations using the service principal?
 
-To perform operations on Repos (update, etc.) we need to associate a Git token with identity that performs that operation.  But as of right now (February 2022nd), we can setup Git token only UI, and there is no official REST API for that.  So, until the REST API is implemented, it's not possible to use service principals for operations on Repos.
+To perform operations on Repos (update, etc.) we need to associate a Git token with an identity that performs that operation. Please see the following documentation:
+* [CICD with SPNs](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/ci-cd/ci-cd-sp)
+* [Git Credentials REST API](https://docs.microsoft.com/en-us/azure/databricks/dev-tools/api/latest/gitcredentials) 
