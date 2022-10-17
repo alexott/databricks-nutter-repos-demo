@@ -70,7 +70,7 @@ We need to create a [personal access token (PAT)](https://docs.databricks.com/ad
 Because we have several pipelines, the it's makes sense to define [variable group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups) to store the data that are necessary for execution of tests & deployment of the code.  We need following configuration properties for execution of our pipelines:
 
 * `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (host name with `https://`, without `?o=`, and **without trailing slash character**.  For example: `https://adb-1568830229861029.9.azuredatabricks.net`).
-* `databricks_token` - personal access token for executing commands against the workspace.  Mark this variable as private!  Note that if you're using Azure DevOps to host repository, then you need to use AAD token instead (see instructions below).
+* `databricks_token` - personal access token for executing commands against the workspace.  Mark this variable as private!
 * `cluster_id` - the ID of the cluster where tests will be executed. DBR 9.1+ should be used to support arbitrary files.
 * `staging_directory` - the directory for staging checkout that we created above. For example, `/Repos/Staging/databricks-nutter-repos-demo`.
 
