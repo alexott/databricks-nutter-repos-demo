@@ -29,5 +29,5 @@ jobs:
 
     - name: Update databricks repo
       run: |
-        databricks repos update --path $DEV_DIRECTORY --branch "$(env.GITHUB_REF_NAME)"
+        databricks repos update --path $DEV_DIRECTORY --branch "$(GITHUB_REF_NAME)"
 
