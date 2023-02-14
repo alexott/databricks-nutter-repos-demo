@@ -12,22 +12,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
-      - name: Setup Python
+    - name: Setup Python
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
-          
-      - name: Install libraries
+      
+    - name: Install libraries
       run: |
         pip install --upgrade pip nutter
 
-      - name: install-databricks-cli
-        uses: microsoft/install-databricks-cli@v1.0.0
+    - name: install-databricks-cli
+      uses: microsoft/install-databricks-cli@v1.0.0
 
-      - name: 
+    - name: Update databricks repo
       run: |
-      databricks repos update --path $DEV_DIRECTORY --branch "$(env.GITHUB_REF_NAME)"
+        databricks repos update --path $DEV_DIRECTORY --branch "$(env.GITHUB_REF_NAME)"
 
