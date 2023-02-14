@@ -1,0 +1,33 @@
+name: CICD
+on:
+  push:
+    branches: [dev,release ]
+    
+env:
+  DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+  DATABRICKS_TOKEN:  ${{ secrets.DATABRICKS_TOKEN }}
+  DEV_DIRECTORY: /Repos/pratik.kewalramani@databricks.com/databricks-nutter-repos-demo/
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+          
+      - name: Install libraries
+      run: |
+        pip install --upgrade pip nutter
+
+      - name: install-databricks-cli
+        uses: microsoft/install-databricks-cli@v1.0.0
+
+      - name: 
+      run: |
+      databricks repos update --path $DEV_DIRECTORY --branch "$(env.GITHUB_REF_NAME)"
+
