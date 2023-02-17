@@ -115,6 +115,22 @@ databricks repos update --path /Repos/Production/databricks-nutter-repos-demo --
 
 After all of this done, the release pipeline will be automatically executed on every successful build in the `releases` branch.
 
+## Github Actions Workflow:
+
+* We need to create a [personal access token (PAT)](https://docs.databricks.com/administration-guide/access-control/tokens.html) that will be used for execution of the tests & updating the repository.  This token will be used to authenticate to Databricks workspace, and then it will fetch configured token to authenticate to Git provider.  We also need to connect Databricks workspace to the Git provider - usually it's done by using the provider-specific access tokens - see [documentation](https://docs.databricks.com/repos.html#configure-your-git-integration-with-databricks) on details of setting the integration with specific Git provider
+
+* Create dev, stage and prod [Environments](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment) in github settings. With environments it is easy to use the same variables names and secret names accross different environments
+ 
+ Create the following properties within each environment:
+
+* `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (host name with `https://`, without `?o=`, and **without trailing slash character**.  For example: `https://adb-1568830229861029.9.azuredatabricks.net`).
+* `databricks_token` - personal access token for executing commands against the workspace. Create this as a secrete variable
+* `cluster_id` - the ID of the cluster where tests will be executed. DBR 9.1+ should be used to support arbitrary files.
+* `repo_directory` - the directory for checkout for specific environment. For example, `/Repos/Staging/databricks-nutter-repos-demo`.
+
+The workflow is the same as above and the pipeline looks as following:
+![Release pipeline](images/release-pipeline-github-actions.png)
+
 # FAQ & Troubleshooting
 
 ## I'm getting "Can’t find repo ID for /Repos/..." when trying to update a repo
