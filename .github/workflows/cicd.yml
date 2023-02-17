@@ -6,7 +6,7 @@ on:
       - LICENSE
       - images
       - terraform
-      - .github
+      - azure-pipeline.yml
       
 env:
   DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
