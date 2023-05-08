@@ -51,6 +51,13 @@ class TestFixtureArbitraryFiles(NutterFixture):
     expected_df = spark.createDataFrame([("ABC", "CEF", 1)], cols)
     assert_df_equality(upper_df, expected_df)
 
+  def assertion_lower_columns_arbitrary_files(self):
+    cols = ["col1", "col2", "col3"]
+    df = spark.createDataFrame([("Abc", "Cef", 1)], cols)
+    upper_df = lower_columns(df, cols)
+    expected_df = spark.createDataFrame([("abc", "cef", 1)], cols)
+    assert_df_equality(upper_df, expected_df)
+
 # COMMAND ----------
 
 result = TestFixtureArbitraryFiles().execute_tests()
@@ -58,7 +65,3 @@ print(result.to_string())
 is_job = dbutils.notebook.entry_point.getDbutils().notebook().getContext().currentRunId().isDefined()
 if is_job:
   result.exit(dbutils)
-
-# COMMAND ----------
-
-

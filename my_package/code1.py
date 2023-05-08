@@ -15,3 +15,13 @@ def upper_columns(df: DataFrame, cols: list) -> DataFrame:
             new_cols.append(F.col(field.name))
             
     return df.select(*new_cols)
+
+def lower_columns(df: DataFrame, cols: list) -> DataFrame:
+    new_cols = []
+    for field in df.schema.fields:
+        if field.dataType == T.StringType() and field.name in cols:
+            new_cols.append(F.lower(F.col(field.name)).alias(field.name))
+        else:
+            new_cols.append(F.col(field.name))
+            
+    return df.select(*new_cols)
