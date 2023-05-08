@@ -63,9 +63,9 @@ stages:
       displayName: 'Checkout & Build.Reason: $(Build.Reason) & Build.SourceBranchName: $(Build.SourceBranchName)'
 
     - script: |
-        python -m pip install pip nutter urllib3==1.24.3
+        python -m pip install pip nutter
         # this is because of the old dependency inside Nutter
-        python -m pip install --upgrade databricks-cli urllib3==1.24.3
+        python -m pip install --upgrade databricks-cli
       displayName: 'Install dependencies'
 
 # https://docs.databricks.com/dev-tools/api/latest/repos.html
@@ -116,9 +116,9 @@ stages:
         displayName: 'Checkout & Build.Reason: $(Build.Reason) & Build.SourceBranchName: $(Build.SourceBranchName)'
 
       - script: |
-          python -m pip install --upgrade pip nutter urllib3==1.24.3
+          python -m pip install --upgrade pip nutter
           # this is because of the old dependency inside Nutter
-          python -m pip install --upgrade databricks-cli urllib3==1.24.3
+          python -m pip install --upgrade databricks-cli
         displayName: 'Install dependencies'
 
       - script: |
