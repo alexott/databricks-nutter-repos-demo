@@ -9,11 +9,12 @@ This demo shows how you can use Repos to work on your own copy of notebooks, tes
 * [The workflow](#the-workflow)
 * [Setup on Databricks side](#setup-on-databricks-side)
 * [Setup Azure DevOps pipelines](#setup-azure-devops-pipelines)
-  * [Create variables group to keep common configuration](#create-variables-group-to-keep-common-configuration)
-  * [Create a build pipeline](#create-a-build-pipeline)
-  * [Create a release pipeline](#create-a-release-pipeline)
+      * [Create variables group to keep common configuration](#create-variables-group-to-keep-common-configuration)
+      * [Create a build pipeline](#create-a-build-pipeline)
+      * [Create a release pipeline](#create-a-release-pipeline)
 * [FAQ &amp; Troubleshooting](#faq--troubleshooting)
    * [I'm getting "Can’t find repo ID for /Repos/..." when trying to update a repo](#im-getting-cant-find-repo-id-for-repos-when-trying-to-update-a-repo)
+   * [I'm getting "Error fetching repo ID for ... Unauthorized access to Org..."](#im-getting-error-fetching-repo-id-for--unauthorized-access-to-org)
    * [How can I perform Repos operations using the service principal?](#how-can-i-perform-repos-operations-using-the-service-principal)
 
 There is a possibility of automated setup of this demo using the Terraform.  Look into [terraform](terraform) folder for existing implementations.
@@ -70,7 +71,7 @@ We need to create a [personal access token (PAT)](https://docs.databricks.com/ad
 Because we have several pipelines, the it's makes sense to define [variable group](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/variable-groups) to store the data that are necessary for execution of tests & deployment of the code.  We need following configuration properties for execution of our pipelines:
 
 * `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (host name with `https://`, without `?o=`, and **without trailing slash character**.  For example: `https://adb-1568830229861029.9.azuredatabricks.net`).
-* `databricks_token` - personal access token for executing commands against the workspace.  Mark this variable as private!  Note that if you're using Azure DevOps to host repository, then you need to use AAD token instead (see instructions below).
+* `databricks_token` - personal access token for executing commands against the workspace.  Mark this variable as private!
 * `cluster_id` - the ID of the cluster where tests will be executed. DBR 9.1+ should be used to support arbitrary files.
 * `staging_directory` - the directory for staging checkout that we created above. For example, `/Repos/Staging/databricks-nutter-repos-demo`.
 
@@ -115,11 +116,31 @@ databricks repos update --path /Repos/Production/databricks-nutter-repos-demo --
 
 After all of this done, the release pipeline will be automatically executed on every successful build in the `releases` branch.
 
+## Github Actions Workflow:
+
+* We need to create a [personal access token (PAT)](https://docs.databricks.com/administration-guide/access-control/tokens.html) that will be used for execution of the tests & updating the repository.  This token will be used to authenticate to Databricks workspace, and then it will fetch configured token to authenticate to Git provider.  We also need to connect Databricks workspace to the Git provider - usually it's done by using the provider-specific access tokens - see [documentation](https://docs.databricks.com/repos.html#configure-your-git-integration-with-databricks) on details of setting the integration with specific Git provider
+
+* Create dev, stage and prod [Environments](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment) in github settings. With environments it is easy to use the same variables names and secret names accross different environments
+ 
+ Create the following properties within each environment:
+
+* `databricks_host` - the [URL of your workspace](https://docs.databricks.com/workspace/workspace-details.html#workspace-instance-names-urls-and-ids) where tests will be executed (host name with `https://`, without `?o=`, and **without trailing slash character**.  For example: `https://adb-1568830229861029.9.azuredatabricks.net`).
+* `databricks_token` - personal access token for executing commands against the workspace. Create this as a secrete variable
+* `cluster_id` - the ID of the cluster where tests will be executed. DBR 9.1+ should be used to support arbitrary files.
+* `repo_directory` - the directory for checkout for specific environment. For example, `/Repos/Staging/databricks-nutter-repos-demo`.
+
+The workflow is the same as above and the pipeline looks as following:
+![Release pipeline](images/release-pipeline-github-actions.png)
+
 # FAQ & Troubleshooting
 
 ## I'm getting "Can’t find repo ID for /Repos/..." when trying to update a repo
 
 This often happens when you're trying to use `databricks repos update` for workspace that have IP Access Lists enabled.  The error message is a misleading, and will be fixed by [this pull request](https://github.com/databricks/databricks-cli/pull/428).
+
+## I'm getting "Error fetching repo ID for ... Unauthorized access to Org..."
+
+This usually happens when you're trying to run CI/CD pipeline against a Databricks workspace with IP Access Lists enabled, and CI/CD server not in the allow list.
 
 ## How can I perform Repos operations using the service principal?
 
