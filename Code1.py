@@ -24,4 +24,3 @@ def upper_columns(df: DataFrame, cols: list) -> DataFrame:
 # COMMAND ----------
 
 # add the comment
-# more commits
