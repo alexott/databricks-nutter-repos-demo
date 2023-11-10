@@ -25,7 +25,7 @@ jobs:
         echo "${{ github.ref_name }}"
     
   OnPush:
-    if: github.ref_name == 'dev'
+    #if: github.ref_name == 'dev'
     environment: dev
     runs-on: ubuntu-latest
     steps:
