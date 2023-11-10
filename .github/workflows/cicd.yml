@@ -17,6 +17,13 @@ env:
 permissions:
   checks: write
 jobs:
+  CheckRef:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check Ref
+    run: |
+     {{ $github.ref_name }}
+    
   OnPush:
     if: github.ref_name == 'dev'
     environment: dev
