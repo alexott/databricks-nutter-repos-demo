@@ -44,7 +44,7 @@ jobs:
         pip install --upgrade pip nutter poetry
     - name: Update databricks repo
       run: |
-        databricks repos update $REPO_DIRECTORY --branch "${{github.ref_name}}"
+        databricks repos update --repo-id $REPO_DIRECTORY --branch "${{github.ref_name}}"
       
     - name: Run Tests
       run: |
