@@ -51,9 +51,9 @@ jobs:
       run: |
         databricks repos update $REPO_DIRECTORY --branch "${{github.ref_name}}"
         
-    #- name: Run Tests
-    #  run: |
-    #    nutter run "$REPO_DIRECTORY/tests/unit-tests/" --cluster_id $CLUSTER_ID --recursive --junit_report --timeout 500    
+    - name: Run Tests
+      run: |
+        nutter run "$REPO_DIRECTORY/tests/unit-tests/" --cluster_id $CLUSTER_ID --recursive --junit_report --timeout 500    
 
     - name: Run Integration test Pipeline
       run: |
