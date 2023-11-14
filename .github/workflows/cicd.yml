@@ -19,13 +19,6 @@ env:
 permissions:
   checks: write
 jobs:
-  CheckRef:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Check Ref
-      run: |
-        echo "${{ github.ref_name }}"
-    
   OnPush:
     if: ${{ !(startsWith(github.ref_name, 'releases')) && !(startsWith(github.ref_name, 'tags')) }} 
     environment: dev
@@ -44,7 +37,7 @@ jobs:
         pip install --upgrade pip nutter poetry
     - name: Update databricks repo
       run: |
-        databricks repos update --repo-id $REPO_DIRECTORY --branch "${{github.ref_name}}"
+        databricks repos update --path $REPO_DIRECTORY --branch "${{github.ref_name}}"
       
     - name: Run Tests
       run: |
