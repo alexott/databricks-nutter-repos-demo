@@ -21,12 +21,3 @@ spark.sql(f"CREATE OR REPLACE TABLE {code1_filtered_name} as SELECT * FROM {code
 # COMMAND ----------
 
 spark.sql(f"select * from {code1_filtered_name}").display()
-
-# COMMAND ----------
-
-# MAGIC %sh
-# MAGIC sleep 120
-
-# COMMAND ----------
-
-

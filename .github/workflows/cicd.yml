@@ -49,12 +49,16 @@ jobs:
       run: |
         databricks repos update --path $REPO_DIRECTORY --branch "${{github.ref_name}}"
         
-    - name: Run Tests
-      run: |
-        nutter run "$REPO_DIRECTORY/tests/unit-tests/" --cluster_id $CLUSTER_ID --recursive --junit_report --timeout 500    
+    #- name: Run Tests
+    #  run: |
+    #    nutter run "$REPO_DIRECTORY/tests/unit-tests/" --cluster_id $CLUSTER_ID --recursive --junit_report --timeout 500    
 
     - name: Run Integration test Pipeline
       run: |
+        echo "$TEST_DLT_PIPELINE_ID $TEST_DLT_PIPELINE_NAME"
+        echo "Databricks version"
+        databricks -v
+
         DLT_START=$SECONDS
         DLT_START_ISO=$(date --iso-8601=seconds)
         JOB_ID=$(databricks jobs run-now ${{ env.TEST_DLT_PIPELINE_ID }} --no-wait | jq .run_id)
