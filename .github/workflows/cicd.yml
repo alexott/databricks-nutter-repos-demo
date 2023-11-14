@@ -42,6 +42,7 @@ jobs:
     - name: Install libraries
       run: |
         pip install --upgrade pip nutter poetry
+        pip uninstall databricks-cli
         curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
         databricks -v
     #- name: install-databricks-cli
@@ -65,7 +66,7 @@ jobs:
         JOB_ID=$(databricks jobs run-now ${{ env.TEST_DLT_PIPELINE_ID }} --no-wait | jq .run_id)
         sleep 15
         while true; do
-          DLT_STATUS=$(databricks jobs get-run $(JOB_ID) |jq .state.life_cycle_state)
+          DLT_STATUS=$(databricks jobs get-run $JOB_ID |jq .state.life_cycle_state)
           if [ "$DLT_STATUS" = "CANCELED" -o "$DLT_STATUS" = "SKIPPED" -o "$DLT_STATUS" = "FAILED" -o "$DLT_STATUS" = "SUCCESS" ]; then
             echo "Exiting loop with status '$DLT_STATUS'"
             break
