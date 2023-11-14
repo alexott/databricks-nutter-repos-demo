@@ -42,6 +42,8 @@ jobs:
     - name: Install libraries
       run: |
         pip install --upgrade pip nutter poetry
+        curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+        databricks -v
     - name: install-databricks-cli
       uses: microsoft/install-databricks-cli@v1.0.0
 
