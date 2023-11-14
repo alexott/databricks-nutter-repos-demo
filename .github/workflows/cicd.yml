@@ -42,7 +42,7 @@ jobs:
     - name: Install libraries
       run: |
         pip install --upgrade pip nutter poetry
-        pip uninstall databricks-cli
+        pip uninstall databricks-cli -y
         sleep 10
         curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
