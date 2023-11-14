@@ -59,8 +59,8 @@ jobs:
         JOB_ID=$(databricks jobs run-now ${{ env.TEST_DLT_PIPELINE_ID }} --no-wait | jq .run_id)
         sleep 15
         while true; do
-          DLT_STATUS=$(databricks jobs get-run $JOB_ID |jq .state.life_cycle_state)
-          DLT_RESULT=$(databricks jobs get-run $JOB_ID |jq .state.result_state)
+          DLT_STATUS=$(databricks jobs get-run $JOB_ID |jq -r .state.life_cycle_state)
+          DLT_RESULT=$(databricks jobs get-run $JOB_ID |jq -r .state.result_state)
           if [ "$DLT_STATUS" = "CANCELED" -o "$DLT_STATUS" = "SKIPPED" -o "$DLT_STATUS" = "FAILED" -o "$DLT_STATUS" = "TERMINATED" ]; then
             echo "Exiting loop with status '$DLT_STATUS'"
             break
