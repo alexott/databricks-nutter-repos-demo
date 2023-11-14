@@ -56,7 +56,7 @@ jobs:
       run: |
         DLT_START=$SECONDS
         DLT_START_ISO=$(date --iso-8601=seconds)
-        poetry run databricks pipelines start --pipeline-id 752345209143482 --full-refresh
+        databricks pipelines start --pipeline-id 752345209143482 --full-refresh
         sleep 15
         while true; do
           DLT_STATUS=$(poetry run databricks pipelines get --pipeline-id 752345209143482 |jq -r '.latest_updates[0].state')
