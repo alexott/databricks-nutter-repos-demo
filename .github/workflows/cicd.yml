@@ -57,11 +57,11 @@ jobs:
       run: |
         DLT_START=$SECONDS
         DLT_START_ISO=$(date --iso-8601=seconds)
-        databricks jobs run-now ${{ env.TEST_DLT_PIPELINE_ID }}
+        JOB_ID=$(databricks jobs run-now ${{ env.TEST_DLT_PIPELINE_ID }} --no-wait | jq .run_id)
         sleep 15
         while true; do
-          DLT_STATUS=$(poetry run databricks pipelines get --pipeline-id ${{ env.TEST_DLT_PIPELINE_ID }} |jq -r '.latest_updates[0].state')
-          if [ "$DLT_STATUS" = "COMPLETED" -o "$DLT_STATUS" = "CANCELED" -o "$DLT_STATUS" = "FAILED" ]; then
+          DLT_STATUS=$(databricks jobs get-run $(JOB_ID) |jq .state.life_cycle_state)
+          if [ "$DLT_STATUS" = "CANCELED" -o "$DLT_STATUS" = "SKIPPED" -o "$DLT_STATUS" = "FAILED" -o "$DLT_STATUS" = "SUCCESS" ]; then
             echo "Exiting loop with status '$DLT_STATUS'"
             break
           fi
@@ -74,13 +74,12 @@ jobs:
         echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?><testsuites><testsuite name=\"DLT Integration test\" tests=\"1\" skipped=\"$DLT_SKIPPED\" errors=\"$DLT_ERRORS\" failures=\"$DLT_ERRORS\" time=\"$((DLT_FINISH-DLT_START))\" timestamp=\"${DLT_START_ISO}\">" > test-dlt.xml
         echo "<testcase classname=\"DLTIntegration\" name=\"${{ env.TEST_DLT_PIPELINE_NAME }}\" time=\"$((DLT_FINISH-DLT_START))\">" >> test-dlt.xml
         if [ "$DLT_STATUS" = "FAILED" ]; then
-          DLT_UPDATE_ID=$(poetry run databricks pipelines get --pipeline-id ${{ env.TEST_DLT_PIPELINE_ID }} |jq -r '.latest_updates[0].update_id')
-          echo "<failure message=\"DLT test failure\">Pipeline update with ID ${DLT_UPDATE_ID} has failed</failure>" >> test-dlt.xml
-        elif [ "$DLT_STATUS" = "CANCELED" ]; then
+          echo "<failure message=\"DLT test failure\">Pipeline update with ID ${JOB_ID} has failed</failure>" >> test-dlt.xml
+        elif [ "$DLT_STATUS" = "SKIPPED" ]; then
           echo '<skipped />' >> test-dlt.xml
         fi
         echo '</testcase></testsuite></testsuites>' >> test-dlt.xml
-        if [ "$DLT_STATUS" != "COMPLETED" ]; then
+        if [ "$DLT_STATUS" != "SUCCESS" ]; then
           exit 1
         fi         
     - name: Publish Test Report
