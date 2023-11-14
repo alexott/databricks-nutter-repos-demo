@@ -3,11 +3,11 @@
 
 # COMMAND ----------
 
-# MAGIC %run ../Code1
+# MAGIC %run ../../Code1
 
 # COMMAND ----------
 
-# MAGIC %run ../Code2
+# MAGIC %run ../../Code2
 
 # COMMAND ----------
 
