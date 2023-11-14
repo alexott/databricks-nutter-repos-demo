@@ -75,11 +75,11 @@ jobs:
         echo "<testcase classname=\"DLTIntegration\" name=\"${{ env.TEST_DLT_PIPELINE_NAME }}\" time=\"$((DLT_FINISH-DLT_START))\">" >> test-dlt.xml
         if [ "$DLT_RESULT" = "FAILED" ]; then
           echo "<failure message=\"DLT test failure\">Pipeline update with ID ${JOB_ID} has failed</failure>" >> test-dlt.xml
-        elif [ "$DLT_STATUS" = "SKIPPED" ]; then
+        elif [ "$DLT_RESULT" = "SKIPPED" ]; then
           echo '<skipped />' >> test-dlt.xml
         fi
         echo '</testcase></testsuite></testsuites>' >> test-dlt.xml
-        if [ "$DLT_STATUS" != "SUCCESS" ]; then
+        if [ "$DLT_RESULT" != "SUCCESS" ]; then
           exit 1
         fi         
     - name: Publish Test Report
