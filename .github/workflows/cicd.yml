@@ -14,6 +14,7 @@ env:
   REPO_DIRECTORY: ${{ vars.REPO_DIRECTORY }}
   CLUSTER_ID: ${{ vars.CLUSTER_ID }}
   TEST_DLT_PIPELINE_ID: 752345209143482
+  TEST_DLT_PIPELINE_NAME: "Demo Integration Test"
 
 permissions:
   checks: write
@@ -56,10 +57,10 @@ jobs:
       run: |
         DLT_START=$SECONDS
         DLT_START_ISO=$(date --iso-8601=seconds)
-        databricks pipelines start --pipeline-id 752345209143482 --full-refresh
+        databricks jobs run-now ${{ env.TEST_DLT_PIPELINE_ID }}
         sleep 15
         while true; do
-          DLT_STATUS=$(poetry run databricks pipelines get --pipeline-id 752345209143482 |jq -r '.latest_updates[0].state')
+          DLT_STATUS=$(poetry run databricks pipelines get --pipeline-id ${{ env.TEST_DLT_PIPELINE_ID }} |jq -r '.latest_updates[0].state')
           if [ "$DLT_STATUS" = "COMPLETED" -o "$DLT_STATUS" = "CANCELED" -o "$DLT_STATUS" = "FAILED" ]; then
             echo "Exiting loop with status '$DLT_STATUS'"
             break
@@ -71,9 +72,9 @@ jobs:
         DLT_ERRORS=$(( "$DLT_STATUS" = "FAILED" ? 1 : 0 ))
         DLT_SKIPPED=$(( "$DLT_STATUS" = "CANCELED" ? 1 : 0 ))
         echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?><testsuites><testsuite name=\"DLT Integration test\" tests=\"1\" skipped=\"$DLT_SKIPPED\" errors=\"$DLT_ERRORS\" failures=\"$DLT_ERRORS\" time=\"$((DLT_FINISH-DLT_START))\" timestamp=\"${DLT_START_ISO}\">" > test-dlt.xml
-        echo "<testcase classname=\"DLTIntegration\" name=\"${TEST_DLT_PIPELINE_NAME}\" time=\"$((DLT_FINISH-DLT_START))\">" >> test-dlt.xml
+        echo "<testcase classname=\"DLTIntegration\" name=\"${{ env.TEST_DLT_PIPELINE_NAME }}\" time=\"$((DLT_FINISH-DLT_START))\">" >> test-dlt.xml
         if [ "$DLT_STATUS" = "FAILED" ]; then
-          DLT_UPDATE_ID=$(poetry run databricks pipelines get --pipeline-id 752345209143482 |jq -r '.latest_updates[0].update_id')
+          DLT_UPDATE_ID=$(poetry run databricks pipelines get --pipeline-id ${{ env.TEST_DLT_PIPELINE_ID }} |jq -r '.latest_updates[0].update_id')
           echo "<failure message=\"DLT test failure\">Pipeline update with ID ${DLT_UPDATE_ID} has failed</failure>" >> test-dlt.xml
         elif [ "$DLT_STATUS" = "CANCELED" ]; then
           echo '<skipped />' >> test-dlt.xml

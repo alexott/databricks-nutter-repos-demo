@@ -5,7 +5,7 @@ from pyspark.sql.types import StructType,StructField,LongType
 
 code1_table_name = dbutils.jobs.taskValues.get(taskKey    = "run_integration_test", \
                             key        = "code1_table_name", \
-                            default    = "code1_table_name", \
+                            default    = "my_data", \
                             debugValue = "table_name")
 
 code1_filtered_name = dbutils.jobs.taskValues.get(taskKey    = "run_integration_test", \
