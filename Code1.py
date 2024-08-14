@@ -8,6 +8,7 @@ from pyspark.sql import DataFrame, SparkSession
 def generate_data1(n=1000, name='my_cool_data'):
     df = SparkSession.getActiveSession().range(0, n)
     df.createOrReplaceTempView(name)
+    return df
 
 # COMMAND ----------
 
@@ -23,4 +24,5 @@ def upper_columns(df: DataFrame, cols: list) -> DataFrame:
 
 # COMMAND ----------
 
+# add a comment
 # new commit
